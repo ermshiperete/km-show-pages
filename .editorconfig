@@ -1,0 +1,11 @@
+# Copyright (c) 2016 SIL International
+# This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
+
+# Defaults
+[*]
+indent_style = space
+indent_size = 2
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = false
+max_line_length = 98

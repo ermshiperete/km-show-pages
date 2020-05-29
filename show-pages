@@ -1,0 +1,23 @@
+#!/bin/bash
+
+function callShowPage() {
+  file=$1
+  name=${file#${BASEDIR}}
+  name=${name#*/}
+  name=${name%%/*}
+
+  ./km-show-page -f $file -n $name --close
+}
+
+if [ -z $1 ]; then
+  echo "Usage: $0 <keyboards repo>"
+  exit 1
+fi
+
+BASEDIR=$1/release/
+
+echo > /tmp/show-pages.output
+
+for f in $(find $BASEDIR -name \*.htm\*); do
+  callShowPage $f >> /tmp/show-pages.output
+done
