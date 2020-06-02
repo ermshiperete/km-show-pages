@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import magic
 import argparse
 import logging
 import os.path
@@ -29,13 +30,22 @@ if __name__ == '__main__':
   if args.file and args.name:
     logging.info("Open %s if available", args.file)
     if args.file and os.path.isfile(args.file):
-      uri_path = pathlib.Path(os.path.abspath(args.file)).as_uri()
-      logging.info("opening " + uri_path)
-      w = BrowserView(uri_path, args.name, args.close)
-      w.resize(800, 600)
-      w.connect("destroy", Gtk.main_quit)
-      w.show_all()
-      Gtk.main()
+      fullPath = os.path.abspath(args.file)
+      blob = open(fullPath, 'rb').read()
+      m = magic.open(magic.MAGIC_MIME_ENCODING)
+      m.load()
+      encoding = m.buffer(blob)
+      logging.debug("file encoding: %s", encoding)
+      if encoding != "utf-8":
+        print("\t- [ ] " + args.Name + ' (' + os.path.basename(args.file) + ' [' + encoding + '])')
+      else:
+        uri_path = pathlib.Path(fullPath).as_uri()
+        logging.info("opening " + uri_path)
+        w = BrowserView(uri_path, args.name, args.close)
+        w.resize(800, 600)
+        w.connect("destroy", Gtk.main_quit)
+        w.show_all()
+        Gtk.main()
     else:
       logging.info("%s not available", args.file)
       print(args.file + " is not available")
