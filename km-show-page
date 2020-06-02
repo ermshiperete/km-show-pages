@@ -21,7 +21,7 @@ if __name__ == '__main__':
   if args.file and args.name:
     logging.info("Open %s if available", args.file)
     if args.file and os.path.isfile(args.file):
-      uri_path = pathlib.Path(args.file).as_uri()
+      uri_path = pathlib.Path(os.path.abspath(args.file)).as_uri()
       logging.info("opening " + uri_path)
       w = BrowserView(uri_path, args.name, args.close)
       w.resize(800, 600)
