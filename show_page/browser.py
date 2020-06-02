@@ -68,7 +68,8 @@ class BrowserView(Gtk.Window):
 
   def on_load_failed(self, web_view, load_event, failing_uri, error):
     logging.info("load failed: " + error.message)
-    print("\t- [ ] " + self.kbName + ' (' + os.path.basename(self.pageUrl) + ')')
+    if self.autoClose:
+      print("\t- [ ] " + self.kbName + ' (' + os.path.basename(self.pageUrl) + ')')
 
   def on_load_changed(self, web_view, load_event):
     if load_event == WebKit2.LoadEvent.FINISHED:
