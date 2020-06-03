@@ -2,6 +2,7 @@
 
 import gi
 import logging
+import magic
 import os.path
 import subprocess
 import webbrowser
@@ -60,7 +61,7 @@ class BrowserView(Gtk.Window):
     return False
 
   def on_no_clicked(self, button):
-    print("\t- [ ] " + self.kbName + ' (' + os.path.basename(self.pageUrl) + ')')
+    self.addErrorKeyboard()
     self.close()
 
   def on_yes_clicked(self, button):
@@ -69,9 +70,24 @@ class BrowserView(Gtk.Window):
   def on_load_failed(self, web_view, load_event, failing_uri, error):
     logging.info("load failed: " + error.message)
     if self.autoClose:
-      print("\t- [ ] " + self.kbName + ' (' + os.path.basename(self.pageUrl) + ')')
+      self.addErrorKeyboard()
 
   def on_load_changed(self, web_view, load_event):
     if load_event == WebKit2.LoadEvent.FINISHED:
       if self.autoClose:
         self.close()
+
+  def checkEncoding(self):
+    url = urllib.parse.urlparse(self.pageUrl)
+    blob = open(url.path, 'rb').read()
+    m = magic.open(magic.MAGIC_MIME_ENCODING)
+    m.load()
+    encoding = m.buffer(blob)
+    logging.debug("file encoding: %s", encoding)
+    if encoding != "utf-8" and encoding != "us-ascii":
+      return f' [{encoding}]'
+    return ''
+
+  def addErrorKeyboard(self):
+    encoding = self.checkEncoding()
+    print(f"\t- [ ] {self.kbName} ({os.path.basename(self.pageUrl)}{encoding})")

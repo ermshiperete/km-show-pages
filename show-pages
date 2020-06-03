@@ -16,8 +16,10 @@ fi
 
 BASEDIR=$1/release/
 
-echo > /tmp/show-pages.output
+echo > /tmp/show-pages-tmp.output
 
 for f in $(find $BASEDIR -name \*.htm\*); do
-  callShowPage $f >> /tmp/show-pages.output
+  callShowPage $f >> /tmp/show-pages-tmp.output
 done
+
+show_page/sortkbds.py /tmp/show-pages-tmp.output > /tmp/show-pages.output
